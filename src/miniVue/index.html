@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <div id='root'>
+    <span v-on:click='handleClick' style='color:red'>{{title}}</span>
+    <hr>
+    <div v-text='subTitle'></div>
+    xiaomi
+  </div>
+</body>
+<script src="./minivue.js"></script>
+<script>
+  const app = new Vue({
+    el: "#root",
+    data: {
+      title: "wo shi title",
+      subTitle: "sub"
+    },
+    methods: {
+      handleClick(e) {
+        console.log('handleClick', e)
+        app.title = Math.random()
+        app.subTitle = Math.random()
+      },
+    },
+  })
+  console.log(app)
+</script>
+
+</html>
