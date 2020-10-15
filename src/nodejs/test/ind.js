@@ -361,8 +361,99 @@ function testReadLine() {
 function testRepl() {
   // repl 模块提供了一种“读取-求值-输出”循环（REPL）的实现，它可作为一个独立的程序或嵌入到其他应用中。 
   const repl = require('repl');
+  const msg = 'message';
+
+  repl.start('>>>>> ').context.m = msg;
+  // 默认情况下 context 的属性不是只读的。 要指定只读的全局变量， context 的属性必须使用 Object.defineProperty() 来定义:
+
+  // _（下划线）变量的赋值
+  // 默认的解释器会把最近一次解释的表达式的结果赋值给变量 _ （下划线）。 显式地设置 _ 为某个值能禁用该特性
 }
-testRepl()
+
+
+function testStream() {
+  const http = require('http')
+  /*
+  Node.js 中有四种基本的流类型：
+          Writable - 可写入数据的流（例如 fs.createWriteStream()）。
+          Readable - 可读取数据的流（例如 fs.createReadStream()）。
+          Duplex - 可读又可写的流（例如 net.Socket）。
+          Transform - 在读写过程中可以修改或转换数据的 Duplex 流（例如 zlib.createDeflate()）。
+  
+          流维护一个缓冲的buffer 满了之后消费之前不会继续读取  直到被消费掉，在进行读取
+          stream API 的主要目标，特别是 stream.pipe()，是为了限制数据的缓冲到可接受的程度，也就是读写速度不一致的源头与目的地不会压垮内存。
+
+    可写流都遵循同一基本的使用模式
+          myStream.write('更多数据');
+          myStream.end('完成写入数据');
+      'close' 事件    当流或其底层资源（比如文件描述符）被关闭时触发。 表明不会再触发其他事件，也不会再发生操作。
+      'drain' 事件    如果调用 stream.write(chunk) 返回 false，则当可以继续写入数据到流时会触发 'drain' 事件。
+      'error' 事件
+      'finish' 事件   调用 stream.end() 且缓冲数据都已传给底层系统之后触发。
+      'pipe' 事件     当在可读流上调用 stream.pipe() 方法时会发出 'pipe' 事件，并将此可写流添加到其目标集。
+      'unpipe' 事件   在可读流上调用 stream.unpipe() 方法时会发出 'unpipe'事件，从其目标集中移除此可写流。
+
+      writable.cork()   强制把所有写入的数据都缓冲到内存中。 当调用 stream.uncork() 或 stream.end() 方法时，缓冲的数据才会被将全部传给 writable._writev()（如果存在）。
+          如果没有实现writev  可能会对吞吐量产生不利影响
+      
+      writable.destroy([error])    调用该方法后，可写流就结束了，之后再调用 write() 或 end() 都会导致 ERR_STREAM_DESTROYED 错误。
+      writable.destroyed
+
+      writable.end([chunk[, encoding]][, callback])
+          chunk <string> | <Buffer> | <Uint8Array> | <any> 要写入的数据。
+          对于非对象模式的流， chunk 必须是字符串、 Buffer、或 Uint8Array。 
+          对于对象模式的流， chunk 可以是任何 JavaScript 值，除了 null。
+      writable.setDefaultEncoding(encoding)
+      writable.uncork()   如果一个流上多次调用 writable.cork()，则必须调用同样次数的 writable.uncork() 才能输出缓冲的数据。
+
+      writable.writable
+      writable.writableEnded
+      writable.writableCorked   为了完全 uncork 流所需要调用的 writable.uncork() 的次数。
+      writable.writableFinished
+      writable.writableHighWaterMark
+      writable.writableLength
+      writable.writableObjectMode
+      writable.write(chunk[, encoding][, callback])
+
+  可读流是对提供数据的来源的一种抽象。
+      两种读取模式    ：流动模式（flowing）或暂停模式（paused）
+        在流动模式中，数据自动从底层系统读取，并通过 EventEmitter 接口的事件尽可能快地被提供给应用程序
+        在暂停模式中，必须显式调用 stream.read() 读取数据块。
+        
+        *所有可读流都开始于暂停模式，可以通过以下方式切换到流动模式：
+          添加 'data' 事件句柄。
+          调用 stream.resume() 方法。
+          调用 stream.pipe() 方法将数据发送到可写流。
+        * 可读流可以通过以下方式切换回暂停模式：
+          如果没有管道目标，则调用 stream.pause()。
+          如果有管道目标，则移除所有管道目标。调用 stream.unpipe() 可以移除多个管道目标。
+        * 如果可读流切换到流动模式，且没有可用的消费者来处理数据，则数据将会丢失。
+        * 添加 'readable' 事件句柄会使流自动停止流动，并通过 readable.read() 消费数据。 如果 'readable' 事件句柄被移除，且存在 'data' 事件句柄，则流会再次开始流动
+        * 建议使用 readable.pipe()，因为它是消费流数据最简单的方式。 
+      'close' 事件
+      'data' 事件
+      'end' 事件
+      'error' 事件
+      'pause' 事件    当调用 stream.pause() 并且 readsFlowing 不为 false 时，就会触发 'pause' 事件。
+      'readable' 事件 当有数据可从流中读取时，就会触发 'readable' 事件。
+      
+  */
+  const server = http.createServer((req, res) => {
+    let body = ''
+    req.on('data', chunk => {
+      body += chunk
+      console.log(chunk)
+    })
+    req.on('end', () => {
+      res.write(body)
+      res.end(body)
+    })
+  })
+  server.listen(8001)
+
+}
+
+testStream()
 
 
 
