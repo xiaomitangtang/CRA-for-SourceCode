@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    .b-text {
+      font-size: 30px;
+    }
+  </style>
+</head>
+
+<body>
+  <div id='root'>
+    <span v-on:click='handleClick' style='color:red'>{{title}}</span>
+    <hr>
+    <div v-text='subTitle' class="b-text"></div>
+    xiaomi
+  </div>
+</body>
+<script src="./minivue.js"></script>
+<script>
+  const app = new Vue({
+    el: "#root",
+    data: {
+      title: "恭喜坤哇在20赛季中荣获第一名",
+      subTitle: "特此颁发奖状，以资鼓励",
+      num: 20
+    },
+    methods: {
+      handleClick(e) {
+        console.log('handleClick', e)
+        app.title = `"恭喜坤哇在${++app.num}赛季中荣获第一名`
+      },
+    },
+  })
+  console.log(app)
+</script>
+
+</html>
