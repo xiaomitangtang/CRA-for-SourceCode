@@ -436,7 +436,9 @@ function testStream() {
       'error' 事件
       'pause' 事件    当调用 stream.pause() 并且 readsFlowing 不为 false 时，就会触发 'pause' 事件。
       'readable' 事件 当有数据可从流中读取时，就会触发 'readable' 事件。
-      
+
+
+      --
   */
   const server = http.createServer((req, res) => {
     let body = ''
