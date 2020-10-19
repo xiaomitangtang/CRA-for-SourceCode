@@ -1,0 +1,18 @@
+{
+  "deploy": {
+    "deployOnChange": true,
+    "deployOnSave": true,
+    "targets": [
+      {
+        "type": "sftp",
+        "name": "My SFTP folder",
+        "description": "A SFTP folder",
+        "dir": "/test",
+        "host": "111.231.200.44",
+        "port": 22,
+        "user": "root",
+        "password": "Tjb15100"
+      }
+    ]
+  }
+}
